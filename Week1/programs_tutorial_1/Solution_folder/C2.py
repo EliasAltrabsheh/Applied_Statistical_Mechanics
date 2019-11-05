@@ -17,7 +17,7 @@ def markov_pi_all_data(N, delta):
 
 n_trials = 2 ** 14
 delta = 0.1
-n_parties = 1
+n_parties = 10
 inside_error_bar = 0
 for iteration in range(n_parties):
     mean, mean_square = markov_pi_all_data(n_trials, delta)
