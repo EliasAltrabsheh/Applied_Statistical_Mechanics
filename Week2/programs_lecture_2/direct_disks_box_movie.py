@@ -1,6 +1,10 @@
 import random, math, os, pylab
 
-output_dir = 'direct_disks_box_movie'
+
+
+output_dir = os.path.dirname(os.path.abspath(__file__)) + '/direct_disks_box_movie'
+
+
 
 def direct_disks_box(N, sigma):
     condition = False
@@ -8,8 +12,8 @@ def direct_disks_box(N, sigma):
         L = [(random.uniform(sigma, 1.0 - sigma), random.uniform(sigma, 1.0 - sigma))]
         for k in range(1, N):
             a = (random.uniform(sigma, 1.0 - sigma), random.uniform(sigma, 1.0 - sigma))
-            min_dist = min(math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) for b in L) 
-            if min_dist < 2.0 * sigma: 
+            min_dist = min(math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) for b in L)
+            if min_dist < 2.0 * sigma:
                 condition = False
                 break
             else:
