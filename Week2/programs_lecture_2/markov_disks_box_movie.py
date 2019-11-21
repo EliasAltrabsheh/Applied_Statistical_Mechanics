@@ -1,6 +1,8 @@
 import random, os, pylab
 
-output_dir = 'markov_disks_box_movie'
+
+output_dir = os.path.dirname(os.path.abspath(__file__)) + '/markov_disks_box_movie'
+
 
 img = 0
 if not os.path.exists(output_dir): os.makedirs(output_dir)
@@ -27,7 +29,7 @@ for step in range(n_steps):
     snapshot(L, colors)
     a = random.choice(L)
     b = [a[0] + random.uniform(-delta, delta), a[1] + random.uniform(-delta, delta)]
-    min_dist = min((b[0] - c[0]) ** 2 + (b[1] - c[1]) ** 2 for c in L if c != a) 
+    min_dist = min((b[0] - c[0]) ** 2 + (b[1] - c[1]) ** 2 for c in L if c != a)
     box_cond = min(b[0], b[1]) < sigma or max(b[0], b[1]) > 1.0 - sigma
     if not (box_cond or min_dist < 4.0 * sigma ** 2):
         a[:] = b
