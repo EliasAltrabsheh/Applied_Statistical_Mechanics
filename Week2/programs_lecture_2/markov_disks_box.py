@@ -6,10 +6,10 @@ sigma_sq = sigma ** 2
 delta = 0.1
 n_steps = 1000
 for steps in range(n_steps):
-    a = random.choice(L)
-    b = [a[0] + random.uniform(-delta, delta), a[1] + random.uniform(-delta, delta)]
+    a = random.choice(L)  # Random chooise of one disk
+    b = [a[0] + random.uniform(-delta, delta), a[1] + random.uniform(-delta, delta)] # Modfy cooridates
     min_dist = min((b[0] - c[0]) ** 2 + (b[1] - c[1]) ** 2 for c in L if c != a)
     box_cond = min(b[0], b[1]) < sigma or max(b[0], b[1]) > 1.0 - sigma
-    if not (box_cond or min_dist < 4.0 * sigma ** 2):
+    if not (box_cond or min_dist < 4.0 * sigma ** 2):  ## test for overlaps
         a[:] = b
 print L
