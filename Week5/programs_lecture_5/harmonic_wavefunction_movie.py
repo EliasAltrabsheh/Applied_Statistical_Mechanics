@@ -1,6 +1,6 @@
 import math, pylab
 
-n_states = 50
+n_states = 10
 grid_x = [i * 0.1 for i in range(-50, 51)]
 psi = {}
 for x in grid_x:

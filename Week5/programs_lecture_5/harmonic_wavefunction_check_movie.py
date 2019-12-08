@@ -5,7 +5,7 @@ L = 10.0
 dx = L / (nx - 1)
 x = [- L / 2.0 + i * dx for i in range(nx)]
 # construct wavefunctions:
-n_states = 4
+n_states = 8
 psi = [[math.exp(-x[i] ** 2 / 2.0) / math.pi ** 0.25 for i in range(nx)]]  # ground state
 psi.append([math.sqrt(2.0) * x[i] * psi[0][i] for i in range(nx)])         # first excited state
 for n in range(2, n_states):
