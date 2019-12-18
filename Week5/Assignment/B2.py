@@ -1,29 +1,27 @@
-import math, random
+import math, random, pylab
 
 def rho_free(x, y, beta):    # free off-diagonal density matrix
     return math.exp(-(x - y) ** 2 / (2.0 * beta))
 
-
 def read_file(filename):
-list_x = []
-list_y = []
-with open(filename) as f:
-    for line in f:
-        x, y = line.split()
-        list_x.append(float(x))
-        list_y.append(float(y))
-f.close()
-return list_x, list_y
+    list_x = []
+    list_y = []
+    with open(filename) as f:
+        for line in f:
+            x, y = line.split()
+            list_x.append(float(x))
+            list_y.append(float(y))
+    f.close()
+    return list_x, list_y
 
 beta = 4.0
-N = 10                                             # number of slices
+N = 10
 dtau = beta / N
-delta = 1.0                                       # maximum displacement on one slice
-n_steps = 1000000                                 # number of Monte Carlo steps
-x = [0.0] * N                                     # initial path
-
-x_temp = []
-for step in range(n_steps):
+delta = 1.0
+n_steps = 10000000
+x = [0.0] * N
+samples_x = []
+for step in xrange(n_steps):
     k = random.randint(0, N - 1)                  # random slice
     knext, kprev = (k + 1) % N, (k - 1) % N       # next/previous slices
     x_new = x[k] + random.uniform(-delta, delta)  # new position at slice k
@@ -35,16 +33,16 @@ for step in range(n_steps):
                    math.exp(-0.5 * dtau * x_new ** 2))
     if random.uniform(0.0, 1.0) < new_weight / old_weight:
         x[k] = x_new
-    #print x
     if step % 10 == 0:
-        x_temp = x
+        samples_x.append(x[0])
 
-pylab.hist(x_temp,  normed='True')
-pylab.xlabel('$x$', fontsize=16)
-pylab.ylabel('$\pi(x)$', fontsize=16)
-
-##pylab.plot(x, y, linewidth=1.5, color='r')
-pylab.title(' normalized\
-        \n histogram for '+str(len(pi_of_x))+' samples',fontsize=16)
-
+pylab.hist(samples_x, normed=True, bins=100, label='QMC')
+x, pi_x = read_file('data_harm_matrixsquaring_beta%s.dat' % beta)
+pylab.plot(x, pi_x, 'r', label='matrix squaring')
+pylab.xlim(-4, 4)
+pylab.legend()
+pylab.xlabel('$x$')
+pylab.ylabel('$\pi(x)$')
+pylab.title('Harmonic oscillator (matrix squaring vs QMC)')
+pylab.savefig('plot_B2_beta%s.png' % beta)
 pylab.show()

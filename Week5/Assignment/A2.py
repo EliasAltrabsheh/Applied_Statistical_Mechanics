@@ -1,7 +1,4 @@
-import random, math,pylab
-
-x = 0.0
-delta = 0.5
+import math, random, pylab
 
 def psi_n_square(x, n):
     if n == -1:
@@ -14,29 +11,43 @@ def psi_n_square(x, n):
                        math.sqrt((k - 1.0) / k) * psi[k - 2])
         return psi[n] ** 2
 
-def psi_0_sq(x):
-
-    return (1/math.pi**0.25) * math.exp(-x**2)
-
-data = []
-
-for k in range(1000):
+beta = 1.0
+nsteps = 5000000
+delta = 1.0
+samples_x = []
+x = 1.0
+n = 1
+for step in range(nsteps):
+    # move 1
     x_new = x + random.uniform(-delta, delta)
-    if random.uniform(0.0, 1.0) <  \
-        min(1,psi_n_square(x_new)/psi_n_square(x_new)**2) :
+    if random.uniform(0.0, 1.0) < psi_n_square(x_new, n) / psi_n_square(x, n):
         x = x_new
-    #print x
-    data.append(x)
+    # move 2
+    delta_n = random.choice([-1, 1])
+    n_new = n + delta_n
+    p_acc = math.exp(- beta * delta_n) * psi_n_square(x, n_new) / psi_n_square(x, n)
+    if random.uniform(0.0, 1.0) < p_acc:
+        n = n_new
+    # take measures
+    if step % 100 == 0:
+        samples_x.append(x)
 
+def pi_class(x, beta):
+    return math.exp(-beta * x ** 2 / 2.0) * math.sqrt(beta / (2.0 * math.pi))
 
+def pi_quant(x, beta):
+    return math.exp(-x ** 2 * math.tanh(beta / 2.0)) * math.sqrt(math.tanh(beta / 2.0) / math.pi)
 
-    pylab.hist(data,  normed='True')
-    pylab.xlabel('$x$', fontsize=16)
-    pylab.ylabel('$\pi(x)$', fontsize=16)
-    x = [a  for a in xrange(0, 1)]
-    y = [a  for a in data]
-    pylab.plot(x, y, linewidth=1.5, color='r')
-    pylab.title(' normalized\
-        \n histogram for '+str(len(data))+' samples',fontsize=16)
-
-    pylab.show()
+pylab.hist(samples_x, bins=100, normed=True, label='MC')
+dx = 0.01
+list_x = [dx * i for i in range(-1000, 1001)]
+prob_quant_x = [pi_quant(xx, beta) for xx in list_x]
+prob_class_x = [pi_class(xx, beta) for xx in list_x]
+pylab.plot(list_x, prob_quant_x, label='pi_quant')
+pylab.plot(list_x, prob_class_x, label='pi_class')
+pylab.xlabel('position $x$')
+pylab.ylabel('$\mathrm{prob}(x)$')
+pylab.title('harmonic oscillator - beta=%s' % beta)
+pylab.legend()
+pylab.savefig('plot_A2_beta%s_prob_x.png' % beta)
+pylab.show()
